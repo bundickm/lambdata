@@ -9,6 +9,10 @@ twine = "*"
 [packages]
 numpy = "*"
 pandas = "*"
+tabulate = "*"
+matplotlib = "*"
+seaborn = "*"
+math = "*"
 
 [requires]
 python_version = "3.7"
