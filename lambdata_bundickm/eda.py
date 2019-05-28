@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from math import ceil
+from matplotlib.colors import LinearSegmentedColormap
+from tabulate import tabulate
+
 class Reports:
   '''
   Reports for exploratory data analysis
@@ -172,7 +180,7 @@ class Support:
     for item in placeholders:
       if len(column.isin([item]).unique())==2:
         p_holds.append(item)
-    return list_to_string(list(set(p_holds)))
+    return Support.list_to_string(list(set(p_holds)))
 
   
   def _null_rec_lookup(null_percent,placeholders=False):
