@@ -14,7 +14,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='lambdata-bundickm',
-    version='0.0.3',
+    version='0.0.4',
     author='bundickm',
     description='a collection of Data Science helper functions',
     long_description=LONG_DESCRIPTION,
