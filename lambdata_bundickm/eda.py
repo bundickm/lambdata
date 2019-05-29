@@ -80,14 +80,12 @@ class Reports:
     table = []
     headers=['Column','Type','nUnique','Unique Values']
 
-    #get unique values and add them to table along with corresponding dtypes
-    for col in cols:
-      unique_vals = Support.list_to_string(list(df[col].unique()[:unq_limit]))
-      if (len(list(df[cols].unique())) > unq_limit): 
+    for i in range(len(cols)):
+      unique_vals = Support.list_to_string(list(df[cols[i]].unique()[:unq_limit]))
+      if (len(list(df[cols[i]].unique())) > unq_limit): 
         unique_vals += '...'
 
-      table.append([col,str(d_types[col]),num_unique[col],unique_vals])
-    #output with tabulate library
+      table.append([cols[i],str(d_types[i]),num_unique[i],unique_vals])
     print(tabulate(table,headers))
 
 
