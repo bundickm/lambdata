@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -132,7 +130,7 @@ class Reports:
 
     #iterate over all features
     for feature in cols:
-      val_counts = df[feature].value_counts(normalize=True, dropna=False)
+      val_counts = df[feature].value_counts(normalize=True)
       low_thresh_count = 0
       low_thresh_violators = []
       high_thresh_violators = []
@@ -241,6 +239,46 @@ class Support:
       df[col] = df[col].str.strip()
 
     return df
+
+
+  def outlier_mask(feature,inclusive=True):
+    '''
+    creates a mask of the outliers using IQR
+    
+    Input:
+    feature: Pandas Series object containing numeric values
+    inclusive: bool, default is True, whether to include values that lie on the
+              boundary of becoming an outlier. False will consider the edge
+              cases as outliers.
+
+    Output:
+    return a Pandas Series object of booleans where True values correspond
+    to outliers in the original feature
+    '''
+    q1 = feature.quantile(.25)
+    q3 = feature.quantile(.75)
+    iqr = q3-q1
+    mask = ~feature.between((q1-1.5*iqr), (q3+1.5*iqr), inclusive=inclusive)
+    return mask
+
+
+  def trimean(feature):
+    '''
+    calculate the trimean of a numeric feature. Trimean is a measure of the
+    center that combines the medians emphasis on center values with the 
+    midhinge's attention to the extremes.
+    
+    Input:
+    feature: Pandas Series object containing numeric values
+    
+    Output:
+    return the trimean as a float
+    '''
+    q1 = feature.quantile(.25)
+    q2 = feature.median()
+    q3 = feature.quantile(.75)
+    
+    return ((q1+2*q2+q3)/4)
 
 
 class Plot:
