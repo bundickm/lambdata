@@ -5,6 +5,7 @@ import seaborn as sns
 from math import ceil
 from matplotlib.colors import LinearSegmentedColormap
 from tabulate import tabulate
+from scipy.stats import probplot
 
 class Reports:
   '''
@@ -155,6 +156,31 @@ class Reports:
     print(tabulate(table,headers))
 
 
+  def numeric_distribution(df):
+    '''
+    Report the skew and excess kurtosis of all numeric features in a dataframe
+    
+    Excess Kurtosis is the kurtosis of the feature minus the kurtosis of
+    the normal distribution(kurtosis = 3)
+    
+    Input:
+    df: Pandas DataFrame object
+    
+    Output:
+    print report to the screen
+    '''
+    headers = ['Feature','Skew','Skew Meaning','Excess Kurtosis']
+    table = []
+    cols = df.select_dtypes(include='number').columns
+
+    for col in cols:
+      skew = df[col].skew()
+      table.append([col,skew,Support._skew_translation(skew),
+                    (df[col].kurtosis()-3)])
+
+    print(tabulate(table,headers))
+
+
 class Support:
   '''
   supporting functions for exploratory data analysis, eventually to be 
@@ -206,7 +232,25 @@ class Support:
       return 'Mostly Filled Column: Impute values'
     else:
       return ''  
+  
+  
+  def _skew_translation(skew):
+    '''
+    Gives a summary phrase for a skew
     
+    Input:
+    skew: float
+    
+    Output:
+    return a string  of skew's corresponding summary phrase
+    '''
+    if (skew < -1) or (skew > 1):
+      return 'Highly Skewed'
+    if (-1 <= skew <= -.5) or (.5 <= skew <= 1):
+      return 'Moderately Skewed'
+    else:
+      return 'Approximately Symmetric'
+
 
   def list_to_string(list):
     '''
@@ -354,8 +398,40 @@ class Plot:
         g = sns.countplot(y=column, hue=hue, data=df)
         substrings = [s.get_text()[:10] for s in g.get_yticklabels()]
         g.set(yticklabels=substrings)
+
+
+  def probability(df, cols=3, width=15, height=10, hspace=.5, wspace=5):
+    '''
+    Create probability plots for all numeric features. Useful for
+    seeing heteroscedasticity.
+    
+    Input:
+    df: Pandas DataFrame object
+    cols: number of graphs to display per row
+    width: figure width
+    height: figure height
+    hspace: the amount of height reserved for space between subplots
+    wspace: the amount of width reserved for space between subplots
+
+    Output:
+    Display n graphs to the screen, where n is the number of 
+    numeric features in df
+    '''
+    df_nums = df.select_dtypes(include='number')
+    
+    #plot settings
+    fig = plt.figure(figsize=(width,height))
+    fig.subplots_adjust(left=None, bottom=None, right=None, top=None, 
+                              wspace=wspace, hspace=hspace)
+    rows = ceil(float(df_nums.shape[1]) / cols)
+
+    #plot graphs
+    for i, column in enumerate(df_nums.columns):
+      ax = fig.add_subplot(rows, cols, i + 1)
+      res = probplot(df_nums[column], plot=plt)
+      ax.set_title(f'Probability Plot of:\n{column}')      
         
-        
+
   def correlation_heatmap(df,figsize=(5,5),annot=True):
     '''
     Heatmap of feature correlations of df
