@@ -6,7 +6,8 @@ import setuptools
 
 REQUIRED = [
     'numpy',
-    'pandas'
+    'pandas',
+    'NEED TO UPDATE THIS FULLY'
 ]
 
 with open('README.md', 'r') as fh:
@@ -14,7 +15,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='lambdata-bundickm',
-    version='0.0.5',
+    version='0.0.6',
     author='bundickm',
     description='a collection of Data Science helper functions',
     long_description=LONG_DESCRIPTION,
